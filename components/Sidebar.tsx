@@ -1,13 +1,15 @@
 import React from 'react';
 import { LayoutDashboard, Target, BarChart3, MessageSquareText, Zap, Settings } from 'lucide-react';
-import { View } from '../types';
+import { View, ThemeColor } from '../types';
 
 interface SidebarProps {
   currentView: View;
   setView: (view: View) => void;
+  quote: string;
+  themeColor: ThemeColor;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, quote, themeColor }) => {
   const navItems = [
     { id: View.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
     { id: View.GOALS, label: 'My Goals', icon: Target },
@@ -18,8 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
 
   return (
     <div className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 h-screen sticky top-0">
-      <div className="p-6 flex items-center space-x-2 text-indigo-600">
-        <Zap className="w-8 h-8 fill-indigo-600" />
+      <div className={`p-6 flex items-center space-x-2 text-${themeColor}-600`}>
+        <Zap className={`w-8 h-8 fill-${themeColor}-600`} />
         <span className="text-xl font-bold tracking-tight text-slate-900">FocusFlow</span>
       </div>
 
@@ -33,11 +35,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
               onClick={() => setView(item.id)}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive
-                  ? 'bg-indigo-50 text-indigo-700 font-medium'
+                  ? `bg-${themeColor}-50 text-${themeColor}-700 font-medium`
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <Icon className={`w-5 h-5 ${isActive ? `text-${themeColor}-600` : 'text-slate-400'}`} />
               <span>{item.label}</span>
             </button>
           );
@@ -47,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
       <div className="p-4 border-t border-slate-100">
         <div className="bg-slate-900 rounded-xl p-4 text-white">
           <p className="text-xs font-medium text-slate-400 mb-1">Pro Tip</p>
-          <p className="text-sm leading-snug">"Consistency beats intensity."</p>
+          <p className="text-sm leading-snug">"{quote}"</p>
         </div>
       </div>
     </div>

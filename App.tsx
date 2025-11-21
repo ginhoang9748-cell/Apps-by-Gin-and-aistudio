@@ -5,7 +5,7 @@ import GoalForm from './components/GoalForm';
 import Analytics from './components/Analytics';
 import AICoach from './components/AICoach';
 import Settings from './components/Settings';
-import { View, Goal, TaskLog, SoundSettings } from './types';
+import { View, Goal, TaskLog, AppSettings as AppSettingsType, ThemeColor } from './types';
 import { Menu, X } from 'lucide-react';
 
 function App() {
@@ -19,13 +19,22 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   
-  const [soundSettings, setSoundSettings] = useState<SoundSettings>(() => {
-    const saved = localStorage.getItem('focusflow_sound_settings');
-    return saved ? JSON.parse(saved) : {
-      enabled: true,
-      type: 'preset',
-      url: 'https://assets.mixkit.co/sfx/preview/mixkit-happy-bells-notification-937.mp3',
-      name: 'Soft Chime'
+  const [appSettings, setAppSettings] = useState<AppSettingsType>(() => {
+    const saved = localStorage.getItem('focusflow_settings');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Migration/Default
+    const oldSound = localStorage.getItem('focusflow_sound_settings');
+    return {
+      sound: oldSound ? JSON.parse(oldSound) : {
+        enabled: true,
+        type: 'preset',
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-happy-bells-notification-937.mp3',
+        name: 'Soft Chime'
+      },
+      quote: "Consistency beats intensity.",
+      themeColor: 'indigo'
     };
   });
 
@@ -41,8 +50,8 @@ function App() {
   }, [taskLogs]);
 
   useEffect(() => {
-    localStorage.setItem('focusflow_sound_settings', JSON.stringify(soundSettings));
-  }, [soundSettings]);
+    localStorage.setItem('focusflow_settings', JSON.stringify(appSettings));
+  }, [appSettings]);
 
   const handleAddGoals = (newGoals: Goal[]) => {
     setGoals(prev => [...prev, ...newGoals]);
@@ -90,16 +99,23 @@ function App() {
     }
   };
 
+  const theme = appSettings.themeColor;
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar for Desktop */}
-      <Sidebar currentView={currentView} setView={setView} />
+      <Sidebar 
+        currentView={currentView} 
+        setView={setView} 
+        quote={appSettings.quote}
+        themeColor={theme}
+      />
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-white md:hidden">
             <div className="p-4 flex justify-between items-center border-b border-slate-100">
-                <span className="font-bold text-lg text-indigo-600">Menu</span>
+                <span className={`font-bold text-lg text-${theme}-600`}>Menu</span>
                 <button onClick={() => setMobileMenuOpen(false)}><X className="w-6 h-6 text-slate-600"/></button>
             </div>
             <div className="p-4 space-y-4">
@@ -116,7 +132,7 @@ function App() {
       <main className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-8">
         {/* Mobile Header */}
         <div className="md:hidden flex justify-between items-center mb-6">
-             <div className="flex items-center space-x-2 text-indigo-600">
+             <div className={`flex items-center space-x-2 text-${theme}-600`}>
                 <span className="text-xl font-bold">FocusFlow</span>
             </div>
             <button onClick={() => setMobileMenuOpen(true)}>
@@ -130,13 +146,14 @@ function App() {
                 goals={goals} 
                 taskLogs={taskLogs} 
                 onToggleTask={handleToggleTask}
-                soundSettings={soundSettings}
+                soundSettings={appSettings.sound}
+                themeColor={theme}
             />
             )}
 
             {currentView === View.GOALS && (
             <div className="space-y-8">
-                <GoalForm onAddGoals={handleAddGoals} />
+                <GoalForm onAddGoals={handleAddGoals} themeColor={theme} />
                 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="p-6 border-b border-slate-100">
@@ -164,15 +181,19 @@ function App() {
             )}
 
             {currentView === View.ANALYTICS && (
-            <Analytics goals={goals} taskLogs={taskLogs} />
+            <Analytics goals={goals} taskLogs={taskLogs} themeColor={theme} />
             )}
 
             {currentView === View.COACH && (
-            <AICoach />
+            <AICoach themeColor={theme} />
             )}
 
             {currentView === View.SETTINGS && (
-            <Settings settings={soundSettings} onSave={setSoundSettings} />
+            <Settings 
+              settings={appSettings} 
+              onSave={setAppSettings} 
+              themeColor={theme}
+            />
             )}
         </div>
       </main>

@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, Plus, Loader2, Upload, Image as ImageIcon, FileText, X, CheckSquare, Square } from 'lucide-react';
 import { generateScheduleFromGoal } from '../services/geminiService';
-import { Goal } from '../types';
+import { Goal, ThemeColor } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface GoalFormProps {
   onAddGoals: (goals: Goal[]) => void;
+  themeColor: ThemeColor;
 }
 
-const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
+const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals, themeColor }) => {
   const [mode, setMode] = useState<'text' | 'image'>('text');
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -113,12 +114,12 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="p-6 bg-indigo-50 border-b border-indigo-100">
-        <h3 className="text-lg font-semibold text-indigo-900 flex items-center">
-          <Sparkles className="w-5 h-5 mr-2 text-indigo-600" />
+      <div className={`p-6 bg-${themeColor}-50 border-b border-${themeColor}-100`}>
+        <h3 className={`text-lg font-semibold text-${themeColor}-900 flex items-center`}>
+          <Sparkles className={`w-5 h-5 mr-2 text-${themeColor}-600`} />
           Create Smart Goals
         </h3>
-        <p className="text-indigo-700 text-sm mt-1">
+        <p className={`text-${themeColor}-700 text-sm mt-1`}>
           {mode === 'text' 
             ? "Tell AI what you want to achieve, and we'll build your schedule." 
             : "Upload a picture of your timetable or class schedule to auto-create reminders."}
@@ -129,7 +130,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
         <button
           onClick={() => setMode('text')}
           className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
-            mode === 'text' ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white' : 'text-slate-500 bg-slate-50 hover:bg-slate-100'
+            mode === 'text' ? `text-${themeColor}-600 border-b-2 border-${themeColor}-600 bg-white` : 'text-slate-500 bg-slate-50 hover:bg-slate-100'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -138,7 +139,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
         <button
           onClick={() => setMode('image')}
           className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
-            mode === 'image' ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white' : 'text-slate-500 bg-slate-50 hover:bg-slate-100'
+            mode === 'image' ? `text-${themeColor}-600 border-b-2 border-${themeColor}-600 bg-white` : 'text-slate-500 bg-slate-50 hover:bg-slate-100'
           }`}
         >
           <ImageIcon className="w-4 h-4" />
@@ -154,7 +155,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="E.g., I want to learn Spanish or Run a marathon..."
-              className="flex-1 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className={`flex-1 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent outline-none`}
               onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
             />
           </div>
@@ -163,7 +164,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
             {!selectedImage ? (
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-slate-50 transition-colors"
+                className={`border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-${themeColor}-400 hover:bg-slate-50 transition-colors`}
               >
                 <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
                 <p className="text-slate-600 font-medium">Click to upload timetable image</p>
@@ -192,7 +193,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Add optional context (e.g., 'Only extract math classes')..."
-              className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+              className={`w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent outline-none text-sm`}
             />
           </div>
         )}
@@ -200,7 +201,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
         <button
           onClick={handleGenerate}
           disabled={isLoading || (mode === 'text' && !prompt) || (mode === 'image' && !selectedImage)}
-          className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className={`w-full bg-${themeColor}-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-${themeColor}-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
         >
           {isLoading ? (
             <>
@@ -223,7 +224,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
                 </h4>
                 <button 
                     onClick={toggleSelectAll}
-                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    className={`text-sm text-${themeColor}-600 hover:text-${themeColor}-800 font-medium`}
                 >
                     {selectedTaskIndices.size === generatedPlan.tasks.length ? 'Deselect All' : 'Select All'}
                 </button>
@@ -238,12 +239,12 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
                     onClick={() => toggleSelection(idx)}
                     className={`cursor-pointer border rounded-xl p-4 transition-all ${
                         isSelected 
-                        ? 'border-indigo-500 bg-indigo-50/50 ring-1 ring-indigo-500' 
-                        : 'border-slate-200 hover:border-indigo-300 bg-slate-50'
+                        ? `border-${themeColor}-500 bg-${themeColor}-50/50 ring-1 ring-${themeColor}-500` 
+                        : `border-slate-200 hover:border-${themeColor}-300 bg-slate-50`
                     }`}
                   >
                     <div className="flex gap-3 items-start">
-                       <div className="mt-1 text-indigo-600">
+                       <div className={`mt-1 text-${themeColor}-600`}>
                            {isSelected ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5 text-slate-400" />}
                        </div>
                        <div className="flex-1">
@@ -267,7 +268,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onAddGoals }) => {
             <button
                 onClick={handleAddSelectedGoals}
                 disabled={selectedTaskIndices.size === 0}
-                className="w-full bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className={`w-full bg-${themeColor}-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-${themeColor}-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
             >
                 <Plus className="w-4 h-4" />
                 Add {selectedTaskIndices.size} Selected Goal{selectedTaskIndices.size !== 1 ? 's' : ''}

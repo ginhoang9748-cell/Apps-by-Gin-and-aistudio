@@ -48,3 +48,11 @@ export interface SoundSettings {
   url: string;
   name: string;
 }
+
+export type ThemeColor = 'indigo' | 'emerald' | 'rose' | 'amber' | 'sky' | 'violet';
+
+export interface AppSettings {
+  sound: SoundSettings;
+  quote: string;
+  themeColor: ThemeColor;
+}

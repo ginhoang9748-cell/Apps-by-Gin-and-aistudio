@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { CheckCircle2, Circle, Clock, Bell, Calendar, FileEdit, X } from 'lucide-react';
-import { Goal, TaskLog, SoundSettings } from '../types';
+import { Goal, TaskLog, SoundSettings, ThemeColor } from '../types';
 
 interface DashboardProps {
   goals: Goal[];
   taskLogs: TaskLog[];
   onToggleTask: (goalId: string, note?: string) => void;
   soundSettings: SoundSettings;
+  themeColor: ThemeColor;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, soundSettings }) => {
+const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, soundSettings, themeColor }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeReminder, setActiveReminder] = useState<string | null>(null);
   
@@ -117,7 +118,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-slate-500">Date</h3>
-            <Calendar className="w-5 h-5 text-indigo-500" />
+            <Calendar className={`w-5 h-5 text-${themeColor}-500`} />
           </div>
           <p className="text-2xl font-bold text-slate-900">
             {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
@@ -126,15 +127,15 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium text-slate-500">Time</h3>
-            <Clock className="w-5 h-5 text-indigo-500" />
+            <Clock className={`w-5 h-5 text-${themeColor}-500`} />
           </div>
           <p className="text-2xl font-bold text-slate-900">
             {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
-        <div className="bg-indigo-600 p-6 rounded-2xl shadow-sm border border-indigo-500 text-white">
+        <div className={`bg-${themeColor}-600 p-6 rounded-2xl shadow-sm border border-${themeColor}-500 text-white`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium text-indigo-100">Tasks Done</h3>
+            <h3 className={`text-sm font-medium text-${themeColor}-100`}>Tasks Done</h3>
             <CheckCircle2 className="w-5 h-5 text-white" />
           </div>
           <p className="text-2xl font-bold">
@@ -160,7 +161,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
                 <div
                 key={goal.id}
                 className={`group flex flex-col bg-white rounded-xl border transition-all duration-200 ${
-                    isCompleted ? 'border-green-200 bg-green-50/30' : 'border-slate-200 hover:border-indigo-300 hover:shadow-md'
+                    isCompleted ? 'border-green-200 bg-green-50/30' : `border-slate-200 hover:border-${themeColor}-300 hover:shadow-md`
                 }`}
                 >
                   <div className="flex items-center p-4">
@@ -171,7 +172,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
                         {isCompleted ? (
                         <CheckCircle2 className="w-8 h-8 text-green-500" />
                         ) : (
-                        <Circle className="w-8 h-8 text-slate-300 group-hover:text-indigo-500" />
+                        <Circle className={`w-8 h-8 text-slate-300 group-hover:text-${themeColor}-500`} />
                         )}
                     </button>
 
@@ -193,7 +194,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
                     {isCompleted && (
                         <button 
                             onClick={() => handleEditNote(goal, log?.note || '')}
-                            className="ml-3 p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+                            className={`ml-3 p-2 text-slate-400 hover:text-${themeColor}-600 hover:bg-${themeColor}-50 rounded-full transition-colors`}
                             title="Edit Note"
                         >
                             <FileEdit className="w-5 h-5" />
@@ -228,14 +229,14 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
                 
                 <div className="mb-6">
                     <p className="text-slate-600 mb-2">
-                        Great job completing <span className="font-semibold text-indigo-600">{selectedGoalForNote.title}</span>!
+                        Great job completing <span className={`font-semibold text-${themeColor}-600`}>{selectedGoalForNote.title}</span>!
                     </p>
                     <p className="text-sm text-slate-500 mb-4">Add a note about what you learned or did (optional):</p>
                     <textarea 
                         value={noteText}
                         onChange={(e) => setNoteText(e.target.value)}
                         placeholder="e.g., Read chapter 4, Ran 5km in 30mins..."
-                        className="w-full h-32 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none text-slate-800"
+                        className={`w-full h-32 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent outline-none resize-none text-slate-800`}
                         autoFocus
                     />
                 </div>
@@ -249,7 +250,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goals, taskLogs, onToggleTask, so
                     </button>
                     <button 
                         onClick={confirmCompletion}
-                        className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+                        className={`flex-1 py-3 bg-${themeColor}-600 text-white font-bold rounded-xl hover:bg-${themeColor}-700 transition-colors shadow-lg shadow-${themeColor}-200`}
                     >
                         Save & Complete
                     </button>

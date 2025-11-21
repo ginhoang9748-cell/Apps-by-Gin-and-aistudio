@@ -9,14 +9,24 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-import { Goal, TaskLog } from '../types';
+import { Goal, TaskLog, ThemeColor } from '../types';
 
 interface AnalyticsProps {
   goals: Goal[];
   taskLogs: TaskLog[];
+  themeColor: ThemeColor;
 }
 
-const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs }) => {
+const COLORS: Record<ThemeColor, string> = {
+    indigo: '#4f46e5',
+    emerald: '#10b981',
+    rose: '#f43f5e',
+    amber: '#f59e0b',
+    sky: '#0ea5e9',
+    violet: '#8b5cf6'
+};
+
+const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs, themeColor }) => {
   // Calculate completion rate per goal
   const data = goals.map(goal => {
     const totalLogs = taskLogs.filter(log => log.goalId === goal.id).length;
@@ -28,6 +38,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs }) => {
       fullTitle: goal.title
     };
   });
+
+  const hexColor = COLORS[themeColor] || COLORS.indigo;
 
   return (
     <div className="space-y-6">
@@ -54,7 +66,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs }) => {
               />
               <Bar dataKey="completions" radius={[4, 4, 0, 0]}>
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4f46e5' : '#6366f1'} />
+                  <Cell key={`cell-${index}`} fill={hexColor} fillOpacity={index % 2 === 0 ? 1 : 0.8} />
                 ))}
               </Bar>
             </BarChart>
@@ -67,7 +79,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs }) => {
                 <h4 className="font-semibold text-slate-900 mb-2">Top Performer</h4>
                 {data.length > 0 ? (
                     <div>
-                        <p className="text-3xl font-bold text-indigo-600">
+                        <p className={`text-3xl font-bold text-${themeColor}-600`}>
                            {data.reduce((prev, current) => (prev.completions > current.completions) ? prev : current).fullTitle}
                         </p>
                         <p className="text-slate-500">Most consistent habit</p>
@@ -76,7 +88,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ goals, taskLogs }) => {
             </div>
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h4 className="font-semibold text-slate-900 mb-2">Total Actions</h4>
-                <p className="text-3xl font-bold text-indigo-600">{taskLogs.length}</p>
+                <p className={`text-3xl font-bold text-${themeColor}-600`}>{taskLogs.length}</p>
                 <p className="text-slate-500">Completed tasks all time</p>
             </div>
         </div>
