@@ -1,0 +1,7 @@
+{
+  "name": "Copy of FocusFlow - AI Habit & Goal Tracker",
+  "description": "A smart goal tracking application that uses Gemini AI to convert abstract goals into concrete schedules, providing intelligent reminders and progress visualization.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
